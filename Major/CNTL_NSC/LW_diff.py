@@ -103,7 +103,7 @@ fig, ax = plt.subplots(2, figsize=(16, 12), sharex=True);
 lw_diff = ax[0].pcolormesh(
     np.linspace(-3, 2.75, 24), dims["lev"],
     data_sel["cntl_lw"] - data_sel["nsc_lw"],
-    cmap="RdBu_r", norm=TwoSlopeNorm(vcenter=0),
+    cmap="RdBu_r", norm=TwoSlopeNorm(vmin=-2, vcenter=0, vmax=2),
 );
 
 t_c = ax[0].contour(
