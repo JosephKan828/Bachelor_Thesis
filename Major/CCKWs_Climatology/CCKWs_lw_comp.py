@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt;
 from matplotlib.colors import TwoSlopeNorm;
 import matplotlib.gridspec as gridspec;
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes;
+from scipy.integrate import trapezoid;
 
 # %% Section 2
 # Load file
@@ -86,21 +87,16 @@ def vint(
     lev : np.ndarray,
 ) -> np.ndarray:
     data_ave: np.ndarray = (data[1:] + data[:-1]) /2.;
-    data_vint: np.ndarray = -np.sum(data_ave * np.diff(lev*100.)[:, None], axis=0) / 9.81 / -np.sum(np.diff(lev*100.));
+    data_vint: np.ndarray = -np.sum(data_ave * np.diff(lev*100.)[:, None], axis=0);
     
     return data_vint;
 
-lw_t_vint: np.ndarray = vint(lw_daily * t_daily, dims["lev"]);
-sw_t_vint: np.ndarray = vint(sw_daily * t_daily, dims["lev"]);
-t_t_vint : np.ndarray = vint(t_daily  * t_daily, dims["lev"]);
+lw_t_vint: np.ndarray = trapezoid(lw_daily*t_daily, x=dims["lev"]*100., axis=0);
+sw_t_vint: np.ndarray = trapezoid(sw_daily*t_daily, x=dims["lev"]*100., axis=0);
+t_t_vint : np.ndarray = trapezoid(t_daily *t_daily, x=dims["lev"]*100., axis=0);
 
-lw_eape = 2 * (lw_daily * t_daily) / (t_daily * t_daily);
-sw_eape = 2 * (sw_daily * t_daily) / (t_daily * t_daily);
-
-#lw_eape_vint: np.ndarray = 2*lw_t_vint / t_t_vint;
-#sw_eape_vint: np.ndarray = 2*sw_t_vint / t_t_vint;
-lw_eape_vint: np.ndarray = vint(lw_eape, dims["lev"]);
-sw_eape_vint: np.ndarray = vint(sw_eape, dims["lev"]);
+lw_eape_vint: np.ndarray = 2*lw_t_vint / t_t_vint;
+sw_eape_vint: np.ndarray = 2*sw_t_vint / t_t_vint;
 
 print(lw_eape_vint.sum())
 print(sw_eape_vint.sum())
@@ -145,10 +141,10 @@ plt.clabel(t_cf, fmt="%1.2f", inline=True, fontsize=10)
 ax1 = fig.add_subplot(gs[1], sharex=ax0)
 lw_positive_cond = np.where(lw_eape_vint > 0)[0]
 lw_negative_cond = np.where(lw_eape_vint < 0)[0]
-ax1.bar(np.linspace(-2.5, 2.5, 6)[lw_positive_cond], lw_eape_vint[lw_positive_cond], color="r", label="LW")
-ax1.bar(np.linspace(-2.5, 2.5, 6)[lw_negative_cond], lw_eape_vint[lw_negative_cond], color="b", label="SW")
+
+ax1.bar(np.linspace(-2.5, 2.5, 6), lw_eape_vint, width=0.1)
 ax1.axhline(0, color="k")
-ax1.set_yticks(np.linspace(-0.5, 0.5, 3))
+ax1.set_yticks(np.linspace(-1.5, 1.5, 3))
 ax1.set_xlim(3, -3)
 
 # Align ax1 with ax0
@@ -187,10 +183,14 @@ ax2.set_position([pos2.x0, pos2.y0, pos2.width, pos2.height])  # Move down sligh
 ax3 = fig.add_subplot(gs[3], sharex=ax0)
 sw_positive_cond = np.where(sw_eape_vint > 0)[0]
 sw_negative_cond = np.where(sw_eape_vint < 0)[0]
-ax3.bar(np.linspace(-2.5, 2.5, 6)[sw_positive_cond], sw_eape_vint[sw_positive_cond], color="r", label="LW")
-ax3.bar(np.linspace(-2.5, 2.5, 6)[sw_negative_cond], sw_eape_vint[sw_negative_cond], color="b", label="SW")
+print(sw_positive_cond)
+print(sw_negative_cond)
+
+#ax3.bar(np.linspace(-3, 2.75, 24)[sw_positive_cond], sw_eape_vint[sw_positive_cond], color="r", label="LW")
+#ax3.bar(np.linspace(-3, 2.75, 24)[sw_negative_cond], sw_eape_vint[sw_negative_cond], color="b", label="SW")
+ax3.bar(np.linspace(-2.5, 2.5, 6), sw_eape_vint, width=0.1)
 ax3.axhline(0, color="k")
-ax3.set_yticks(np.linspace(-0.2, 0.2, 3))
+ax3.set_yticks(np.linspace(-0.25, 0.25, 3))
 ax3.set_xlim(3, -3)
 
 # Align ax3 with ax2

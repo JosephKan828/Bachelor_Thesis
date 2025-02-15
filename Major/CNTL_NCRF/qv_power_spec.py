@@ -19,19 +19,17 @@ data: dict[str, np.ndarray] = dict();
 
 
 # # CNTL
-with nc.Dataset(f"{path}CNTL/theta.nc", "r") as cntl:
+with nc.Dataset(f"{path}CNTL/qv.nc", "r") as cntl:
     for key in cntl.dimensions.keys():
         dims[key] = cntl.variables[key][:];
     
-    lat_lim: tuple[int] = np.where((dims["lat"] >= -5) & (dims["lat"] <= 5))[0];
-
-    convert: np.ndarray = (1000. / dims["lev"][None, :, None, None]) ** (-0.286);
+    lat_lim: tuple[int] = np.where((dims["lat"] >= -5) & (dims["lat"] <= 5))[0];  
     
-    data["cntl"] = cntl.variables["theta"][:, :, lat_lim, :] * convert;
+    data["cntl"] = cntl.variables["qv"][:, :, lat_lim, :] * 1000.;
     
 # # NCRF
-with nc.Dataset(f"{path}NCRF/theta.nc", "r") as nsc:
-    data["ncrf"] = nsc.variables["theta"][:, :, lat_lim, :] * convert;
+with nc.Dataset(f"{path}NCRF/qv.nc", "r") as nsc:
+    data["ncrf"] = nsc.variables["qv"][:, :, lat_lim, :] * 1000.;
 
 ltime, llev, llat, llon = data["cntl"].shape;
 
@@ -115,7 +113,7 @@ asy_ps_weight: dict[str, np.ndarray] = dict(
     for exp in data.keys()
 );
 
-# # Compute background
+ # Compute background
 
 def background(data, nsmooth=20):
     kernel = np.array([1, 2, 1])
@@ -177,7 +175,6 @@ cntl_speed: float = phase_speed(wn_cntl, fr_cntl);
 ncrf_speed: float = phase_speed(wn_ncrf, fr_ncrf);
 
 # Figure
-# %%
 plt.rcParams["font.family"] = "serif";
 
 kelvin = lambda wn, eq: wn * np.sqrt(9.81*eq) * 86400 / (2*np.pi*6.371e6);
@@ -223,7 +220,7 @@ plot_lines(ax[0], wn_ana, fr_ana);
 ax[0].plot(wn_cntl, fr_cntl, "ro", markersize=10);
 ax[0].text(15, 0, f"Phase Speed: {cntl_speed:.2f} [m/s]", ha="right", va="bottom");
 ax[0].text(0, -0.06, "Zonal Wavenumber", ha="center", fontsize=14);
-ax[0].text(-20, 0.25, "Frequency [CPD]", va="center", rotation=90, fontsize=14);
+ax[0].text(-20, 0.25, "Freqquency [CPD]", va="center", rotation=90, fontsize=14);
 ax[0].set_xlim(-15, 15);
 ax[0].set_ylim(0, 1/2);
 ax[0].text(0, 0.52, "CNTL", ha="center", fontsize=16)
@@ -246,48 +243,30 @@ ax[1].text(0, 0.52, "NCRF", ha="center", fontsize=16)
 cbar = plt.colorbar(nsc_ps, ax=ax, orientation="horizontal", aspect=40, shrink=0.7)
 cbar.set_label("Normalized Power", fontsize=14);
 
-plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Figure04.png", dpi=300);
+plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Appendix01.png", dpi=300);
 plt.show();
 
-
-fig, ax = plt.subplots(1, 2, figsize=(12, 7), sharey=True);
-plt.subplots_adjust(left=0.08, right=0.96, bottom=0.03, top=0.9);
-cntl_ps = ax[0].contourf(
+plt.contourf(
     wn_v, fr_v[fr_v>0],
     np.log(np.fft.fftshift(sym_ps_weight["cntl"])[fr_v>0]),
     cmap="Blues",
-    levels=np.linspace(-7, 0, 15),
-    extend="min",
-);
-plot_lines(ax[0], wn_ana, fr_ana);
-ax[0].plot(wn_cntl, fr_cntl, "ro", markersize=10);
-ax[0].text(15, 0, f"Phase Speed: {cntl_speed:.2f} [m/s]", ha="right", va="bottom");
-ax[0].text(0, -0.06, "Zonal Wavenumber", ha="center", fontsize=14);
-ax[0].text(-20, 0.25, "Frequency [CPD]", va="center", rotation=90, fontsize=14);
-ax[0].set_xlim(-15, 15);
-ax[0].set_ylim(0, 1/2);
-ax[0].text(0, 0.52, "CNTL", ha="center", fontsize=16)
-plt.colorbar(cntl_ps, ax=ax[0], orientation="horizontal", aspect=30, shrink=0.7);
-
-nsc_ps = ax[1].contourf(
-    wn_v, fr_v[fr_v>0],
-    np.log(np.fft.fftshift(sym_peak["ncrf"])[fr_v>0]),
-    cmap="Blues",
-    levels=np.linspace(0, 3, 16),
+    #levels=np.linspace(1, 10, 19),
     extend="max",
-);
-plot_lines(ax[1], wn_ana, fr_ana);
-ax[1].text(15, 0, f"Phase Speed: {ncrf_speed:.2f} [m/s]", ha="right", va="bottom");
-ax[1].plot(wn_ncrf, fr_ncrf, "ro", markersize=10);
-ax[1].text(0, -0.06, "Zonal Wavenumber", ha="center", fontsize=14);
-ax[1].set_xlim(-15, 15);
-ax[1].set_ylim(0, 1/2);
-ax[1].text(0, 0.52, "NCRF", ha="center", fontsize=16)
+    )
+plt.xlim(-15, 15);
+plt.ylim(0, 1/2);
+plt.colorbar();
+plt.show();
 
-cbar = plt.colorbar(nsc_ps, ax=ax[1], orientation="horizontal", aspect=40, shrink=0.7)
-cbar.set_ticks(np.linspace(0, 3, 4));
-cbar.set_label("Normalized Power", fontsize=14);
-
-plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Appendix01.png", dpi=300);
+plt.contourf(
+    wn_v, fr_v[fr_v>0],
+    np.log(np.fft.fftshift(sym_ps_weight["ncrf"])[fr_v>0]),
+    cmap="Blues",
+#    levels=np.linspace(1, 10, 19),
+    extend="max",
+    )
+plt.xlim(-15, 15);
+plt.ylim(0, 1/2);
+plt.colorbar();
 plt.show();
 
