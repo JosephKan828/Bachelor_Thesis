@@ -283,7 +283,7 @@ ax[1].plot(wn_nsc, fr_nsc, "ro", markersize=10);
 ax[1].text(0, -0.06, "Zonal Wavenumber", ha="center", fontsize=14);
 ax[1].set_xlim(-15, 15);
 ax[1].set_ylim(0, 1/2);
-ax[1].text(0, 0.52, "NCRF", ha="center", fontsize=16)
+ax[1].text(0, 0.52, "NSC", ha="center", fontsize=16)
 
 cbar = plt.colorbar(nsc_ps, ax=ax[1], orientation="horizontal", aspect=40, shrink=0.7)
 cbar.set_ticks(np.linspace(0, 3, 4));
