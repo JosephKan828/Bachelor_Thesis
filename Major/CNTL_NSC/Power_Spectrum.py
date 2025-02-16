@@ -82,7 +82,7 @@ def power_spec(
     fft: np.ndarray = np.fft.fft(data, axis=1);
     fft: np.ndarray = np.fft.ifft(fft, axis=4) * data.shape[4];
 
-    ps : np.ndarray = (fft * fft.conj()) / (data.shape[1] * data.shape[4]) * 2;
+    ps : np.ndarray = (fft * fft.conj()) / (data.shape[1] * data.shape[4])**2;
 
     return ps.mean(axis=0).real;
 
@@ -176,6 +176,7 @@ phase_speed = lambda wn, fr: fr / wn * (2*np.pi*6.371e6) / 86400;
 cntl_speed: float = phase_speed(wn_cntl, fr_cntl);
 nsc_speed: float = phase_speed(wn_nsc, fr_nsc);
 
+# %%
 # Figure
 plt.rcParams["font.family"] = "serif";
 
@@ -247,3 +248,47 @@ cbar.set_label("Normalized Power", fontsize=14);
 
 plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Figure06.png", dpi=300);
 plt.show();
+
+
+
+fig, ax = plt.subplots(1, 2, figsize=(12, 7), sharey=True);
+plt.subplots_adjust(left=0.08, right=0.96, bottom=0.03, top=0.9);
+cntl_ps = ax[0].contourf(
+    wn_v, fr_v[fr_v>0],
+    np.log(np.fft.fftshift(sym_ps_weight["cntl"])[fr_v>0]),
+    cmap="Blues",
+    levels=np.linspace(-7, 0, 15),
+    extend="min",
+);
+plot_lines(ax[0], wn_ana, fr_ana);
+ax[0].plot(wn_cntl, fr_cntl, "ro", markersize=10);
+ax[0].text(15, 0, f"Phase Speed: {cntl_speed:.2f} [m/s]", ha="right", va="bottom");
+ax[0].text(0, -0.06, "Zonal Wavenumber", ha="center", fontsize=14);
+ax[0].text(-20, 0.25, "Frequency [CPD]", va="center", rotation=90, fontsize=14);
+ax[0].set_xlim(-15, 15);
+ax[0].set_ylim(0, 1/2);
+ax[0].text(0, 0.52, "CNTL", ha="center", fontsize=16)
+plt.colorbar(cntl_ps, ax=ax[0], orientation="horizontal", aspect=30, shrink=0.7);
+
+nsc_ps = ax[1].contourf(
+    wn_v, fr_v[fr_v>0],
+    np.log(np.fft.fftshift(sym_peak["nsc"])[fr_v>0]),
+    cmap="Blues",
+    levels=np.linspace(0, 3, 16),
+    extend="max",
+);
+plot_lines(ax[1], wn_ana, fr_ana);
+ax[1].text(15, 0, f"Phase Speed: {nsc_speed:.2f} [m/s]", ha="right", va="bottom");
+ax[1].plot(wn_nsc, fr_nsc, "ro", markersize=10);
+ax[1].text(0, -0.06, "Zonal Wavenumber", ha="center", fontsize=14);
+ax[1].set_xlim(-15, 15);
+ax[1].set_ylim(0, 1/2);
+ax[1].text(0, 0.52, "NCRF", ha="center", fontsize=16)
+
+cbar = plt.colorbar(nsc_ps, ax=ax[1], orientation="horizontal", aspect=40, shrink=0.7)
+cbar.set_ticks(np.linspace(0, 3, 4));
+cbar.set_label("Normalized Power", fontsize=14);
+
+plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Appendix02.png", dpi=300);
+plt.show();
+# %%
