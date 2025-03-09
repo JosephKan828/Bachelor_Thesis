@@ -67,6 +67,8 @@ def main():
     
     print("Mean field shape: ", data_mean["lw"].shape);
     
+    sigma = -data["alpha"].mean(axis=(2, 3)) / data["theta"].mean(axis=(2, 3)) * np.gradient(data["theta"].mean(axis=(2, 3)), dims["lev"]*100., axis=1);
+    
     # Select data
     data_sel: dict[str, np.ndarray] = dict();
 
@@ -78,9 +80,15 @@ def main():
         ]);
 
         data_sel[var] = sel_data.mean(axis=0).T;
+        
+    sigma_sel = np.array([
+            sigma[sel_time[i]-12:sel_time[i]+12]
+            for i in range(sel_lon.size)
+        ]);
+
+    print("Selected sigma shape:", sigma_sel.shape);
 
     # Compute parameters
-    sigma = -data_mean["alpha"].squeeze() / data_mean["theta"].squeeze() * np.gradient(data_mean["theta"].squeeze(), dims["lev"]*100.);    
     
     # Compute daily mean variable
     a_daily = np.array([
