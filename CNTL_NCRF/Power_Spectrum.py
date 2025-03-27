@@ -146,12 +146,6 @@ sym_peak: dict[str, np.ndarray] = dict(
     for exp in data.keys()
 );
 
-plt.contourf(np.log10(bg), 10);
-plt.xlim(345 ,375)
-plt.ylim(40, 80);
-plt.colorbar()
-plt.show()
-
 wn: np.ndarray = (np.fft.fftfreq(llon, d=1/llon).astype(int));
 fr: np.ndarray = (np.fft.fftfreq(lsec, d=1/4));
 
@@ -176,6 +170,10 @@ fr_cntl: float = np.sum(frm[kelvin_cond] * sym_ps_weight["cntl"][kelvin_cond]) /
 
 wn_ncrf: float = np.sum(wnm[kelvin_cond] * sym_ps_weight["ncrf"][kelvin_cond]) / np.sum(sym_ps_weight["ncrf"][kelvin_cond]);
 fr_ncrf: float = np.sum(frm[kelvin_cond] * sym_ps_weight["ncrf"][kelvin_cond]) / np.sum(sym_ps_weight["ncrf"][kelvin_cond]);
+
+
+print(sym_ps_weight["ncrf"][kelvin_cond].sum())
+print(sym_ps_weight["cntl"][kelvin_cond].sum())
 
 phase_speed = lambda wn, fr: fr / wn * (2*np.pi*6.371e6) / 86400;
 
@@ -250,9 +248,9 @@ ax[1].set_ylim(0, 1/2);
 ax[1].text(0, 0.52, "NCRF", ha="center", fontsize=16)
 
 cbar = plt.colorbar(nsc_ps, ax=ax, orientation="horizontal", aspect=40, shrink=0.7)
-cbar.set_label("Normalized Power", fontsize=14);
+cbar.set_label(r"Normalized Power [$K^2 / K^2$]", fontsize=14);
 
-#plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Figure04.png", dpi=300);
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NCRF_norm_power.png", dpi=300);
 plt.show();
 
 
@@ -292,8 +290,8 @@ ax[1].text(0, 0.52, "NCRF", ha="center", fontsize=16)
 
 cbar = plt.colorbar(nsc_ps, ax=ax[1], orientation="horizontal", aspect=40, shrink=0.7)
 #cbar.set_ticks(np.linspace(0, 3, 4));
-cbar.set_label("Normalized Power", fontsize=14);
+cbar.set_label(r"Raw Power [$K^2$]", fontsize=14);
 
-#plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Appendix01.png", dpi=300);
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NCRF_raw_power.png", dpi=300);
 plt.show();
 

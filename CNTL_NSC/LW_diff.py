@@ -38,10 +38,10 @@ with nc.Dataset(f"{path}NSC/qv.nc", "r") as f:
     data["nsc_qv"] = f.variables["qv"][:, :, lat_lim, :] * 1000.;
 
 # # Load Selected Events
-with open("/home/b11209013/Bachelor_Thesis/Major/CCKWs_Selection/CNTL_comp.pkl", "rb") as f:
+with open("/home/b11209013/Bachelor_Thesis/CCKWs_Selection/CNTL_comp.pkl", "rb") as f:
     cntl_comp = pkl.load(f);
 
-with open("/home/b11209013/Bachelor_Thesis/Major/CCKWs_Selection/NSC_comp.pkl", "rb") as f:
+with open("/home/b11209013/Bachelor_Thesis/CCKWs_Selection/NSC_comp.pkl", "rb") as f:
     nsc_comp = pkl.load(f);
 
 sel_lon: dict[str, np.ndarray] = dict(
@@ -147,5 +147,5 @@ ax[1].set_ylim(1000, 100);
 plt.clabel(qv_c, fmt="%1.2f", inline=True, fontsize=10);
 plt.colorbar(qv_diff);
 
-plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Figure05.png", dpi=300);
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NSC_LW_qv_diff.png", dpi=300);
 plt.show();

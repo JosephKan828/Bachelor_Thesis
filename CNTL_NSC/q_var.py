@@ -127,8 +127,8 @@ print(data_recon["cntl"].shape);
 
 # vertically integrate over specific levels
 data_vint_500: dict[str, np.ndarray] = dict(
-    cntl = vint(np.var(data_recon["cntl"], axis=(0, -1)), cntl_dims["lev"]*100., 30000, 70000),
-    ncrf = vint(np.var(data_recon["ncrf"], axis=(0, -1)), ncrf_dims["lev"]*100., 30000, 70000),
+    cntl = vint(np.var(data_recon["cntl"], axis=(0, -1)), cntl_dims["lev"]*100., 40000, 60000),
+    ncrf = vint(np.var(data_recon["ncrf"], axis=(0, -1)), ncrf_dims["lev"]*100., 40000, 60000),
 );
 print("vertically integrate over 300~500 hPa:");
 print(data_vint_500);

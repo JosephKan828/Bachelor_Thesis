@@ -173,11 +173,7 @@ fr_nsc: float = np.sum(frm[kelvin_cond] * sym_ps_weight["nsc"][kelvin_cond]) / n
 
 print( sym_ps_weight["nsc"][kelvin_cond].sum())
 print( sym_ps_weight["cntl"][kelvin_cond].sum())
-plt.contourf(wn_v, fr_v, np.log(np.fft.fftshift(sym_ps_weight["cntl"])));
-plt.xlim(-15, 15)
-plt.ylim(0, 0.5)
-plt.colorbar()
-plt.show()
+
 phase_speed = lambda wn, fr: fr / wn * (2*np.pi*6.371e6) / 86400;
 
 cntl_speed: float = phase_speed(wn_cntl, fr_cntl);
@@ -251,9 +247,9 @@ ax[1].set_ylim(0, 1/2);
 ax[1].text(0, 0.52, "NSC", ha="center", fontsize=16)
 
 cbar = plt.colorbar(nsc_ps, ax=ax, orientation="horizontal", aspect=40, shrink=0.7)
-cbar.set_label("Normalized Power", fontsize=14);
+cbar.set_label(r"Normalized Power [$K^2 / K^2$]", fontsize=14);
 
-plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/Figure06.png", dpi=300);
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NSC_norm_power.png", dpi=300);
 plt.show();
 
 
@@ -294,8 +290,8 @@ ax[1].text(0, 0.52, "NSC", ha="center", fontsize=16)
 
 cbar = plt.colorbar(nsc_ps, ax=ax[1], orientation="horizontal", aspect=40, shrink=0.7)
 cbar.set_ticks(np.linspace(-7, -1, 7));
-cbar.set_label("Normalized Power", fontsize=14);
+cbar.set_label(r"RawPower [$K^2$]", fontsize=14);
 
-plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/Appendix02.png", dpi=300);
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NSC_raw_power.png.png", dpi=300);
 plt.show();
 # %%

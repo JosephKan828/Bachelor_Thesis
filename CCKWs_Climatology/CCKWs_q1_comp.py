@@ -9,7 +9,6 @@ import matplotlib
 from matplotlib import pyplot as plt;
 from matplotlib.colors import TwoSlopeNorm;
 
-matplotlib.use('Agg')  # or 'Qt5Agg'
 # %% Section 2
 # Load file
 path: str = "/work/b11209013/2024_Research/MPAS/merged_data/CNTL/";
@@ -34,7 +33,7 @@ with nc.Dataset(f"{path}qv.nc", "r") as f:
     data["qv"] = f.variables["qv"][:, :, lat_lim, :] * 1000;
 
 # # Load Event
-with open("/home/b11209013/Bachelor_Thesis/Major/CCKWs_Selection/CNTL_comp.pkl", "rb") as f:
+with open("/home/b11209013/Bachelor_Thesis/CCKWs_Selection/CNTL_comp.pkl", "rb") as f:
     sel_kel = pkl.load(f);
 
 sel_lon : np.ndarray = np.array(sel_kel["sel_lon"]);
@@ -97,5 +96,5 @@ plt.gca().invert_yaxis();
 plt.colorbar(q1_cf);
 plt.clabel(t_cf, fmt="%1.2f", inline=True, fontsize=10);
 plt.clabel(qv_cf, fmt="%1.2f", inline=True, fontsize=10);
-plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Figure01.png", dpi=500);
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/CCKW_q1_cli.png", dpi=500);
 plt.show();

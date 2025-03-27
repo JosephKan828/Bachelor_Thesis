@@ -126,10 +126,16 @@ data_recon: dict[str, np.ndarray] = dict(
 print(data_recon["cntl"].shape);
 
 # vertically integrate over specific levels
-data_vint_500: dict[str, np.ndarray] = dict(
+data_vint_400_600: dict[str, np.ndarray] = dict(
     cntl = vint(np.var(data_recon["cntl"], axis=(0, -1)), cntl_dims["lev"]*100., 40000, 60000),
     ncrf = vint(np.var(data_recon["ncrf"], axis=(0, -1)), ncrf_dims["lev"]*100., 40000, 60000),
 );
-print("vertically integrate over 300~500 hPa:");
-print(data_vint_500);
+print("vertically integrate over 400~600 hPa:");
+print(data_vint_400_600);
 
+data_vint_300_700: dict[str, np.ndarray] = dict(
+    cntl = vint(np.var(data_recon["cntl"], axis=(0, -1)), cntl_dims["lev"]*100., 30000, 70000),
+    ncrf = vint(np.var(data_recon["ncrf"], axis=(0, -1)), ncrf_dims["lev"]*100., 30000, 70000),
+);
+print("vertically integrate over 300~700 hPa:");
+print(data_vint_300_700);
