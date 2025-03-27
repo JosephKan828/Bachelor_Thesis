@@ -138,11 +138,11 @@ def background(data, nsmooth=20):
     return data
 
 bg: np.ndarray = background(
-    (sym_ps_weight["cntl"] + asy_ps_weight["cntl"])/2
+    np.fft.fftshift((sym_ps_weight["cntl"] + asy_ps_weight["cntl"])/2)
 );
 
 sym_peak: dict[str, np.ndarray] = dict(
-    (exp, sym_ps_weight[exp] / bg)
+    (exp, np.fft.fftshift(sym_ps_weight[exp]) / bg)
     for exp in data.keys()
 );
 
@@ -171,6 +171,13 @@ fr_cntl: float = np.sum(frm[kelvin_cond] * sym_ps_weight["cntl"][kelvin_cond]) /
 wn_nsc: float = np.sum(wnm[kelvin_cond] * sym_ps_weight["nsc"][kelvin_cond]) / np.sum(sym_ps_weight["nsc"][kelvin_cond]);
 fr_nsc: float = np.sum(frm[kelvin_cond] * sym_ps_weight["nsc"][kelvin_cond]) / np.sum(sym_ps_weight["nsc"][kelvin_cond]);
 
+print( sym_ps_weight["nsc"][kelvin_cond].sum())
+print( sym_ps_weight["cntl"][kelvin_cond].sum())
+plt.contourf(wn_v, fr_v, np.log(np.fft.fftshift(sym_ps_weight["cntl"])));
+plt.xlim(-15, 15)
+plt.ylim(0, 0.5)
+plt.colorbar()
+plt.show()
 phase_speed = lambda wn, fr: fr / wn * (2*np.pi*6.371e6) / 86400;
 
 cntl_speed: float = phase_speed(wn_cntl, fr_cntl);
@@ -214,7 +221,7 @@ fig, ax = plt.subplots(1, 2, figsize=(12, 7), sharey=True);
 plt.subplots_adjust(left=0.08, right=0.96, bottom=0.03, top=0.9);
 cntl_ps = ax[0].contourf(
     wn_v, fr_v[fr_v>0],
-    np.fft.fftshift(sym_peak["cntl"])[fr_v>0],
+    (sym_peak["cntl"])[fr_v>0],
     cmap="Blues",
     levels=np.linspace(1, 10, 19),
     extend="max",
@@ -230,7 +237,7 @@ ax[0].text(0, 0.52, "CNTL", ha="center", fontsize=16)
 
 nsc_ps = ax[1].contourf(
     wn_v, fr_v[fr_v>0],
-    np.fft.fftshift(sym_peak["nsc"])[fr_v>0],
+    (sym_peak["nsc"])[fr_v>0],
     cmap="Blues",
     levels=np.linspace(1, 10, 19),
     extend="max",
@@ -246,7 +253,7 @@ ax[1].text(0, 0.52, "NSC", ha="center", fontsize=16)
 cbar = plt.colorbar(nsc_ps, ax=ax, orientation="horizontal", aspect=40, shrink=0.7)
 cbar.set_label("Normalized Power", fontsize=14);
 
-plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Figure06.png", dpi=300);
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/Figure06.png", dpi=300);
 plt.show();
 
 
@@ -257,7 +264,7 @@ cntl_ps = ax[0].contourf(
     wn_v, fr_v[fr_v>0],
     np.log(np.fft.fftshift(sym_ps_weight["cntl"])[fr_v>0]),
     cmap="Blues",
-    levels=np.linspace(-7, 0, 15),
+    levels=np.linspace(-7, -1, 13),
     extend="min",
 );
 plot_lines(ax[0], wn_ana, fr_ana);
@@ -272,10 +279,10 @@ plt.colorbar(cntl_ps, ax=ax[0], orientation="horizontal", aspect=30, shrink=0.7)
 
 nsc_ps = ax[1].contourf(
     wn_v, fr_v[fr_v>0],
-    np.log(np.fft.fftshift(sym_peak["nsc"])[fr_v>0]),
+    np.log(np.fft.fftshift(sym_ps_weight["nsc"])[fr_v>0]),
     cmap="Blues",
-    levels=np.linspace(0, 3, 16),
-    extend="max",
+    levels=np.linspace(-7, -1, 13),
+    extend="min",
 );
 plot_lines(ax[1], wn_ana, fr_ana);
 ax[1].text(15, 0, f"Phase Speed: {nsc_speed:.2f} [m/s]", ha="right", va="bottom");
@@ -286,9 +293,9 @@ ax[1].set_ylim(0, 1/2);
 ax[1].text(0, 0.52, "NSC", ha="center", fontsize=16)
 
 cbar = plt.colorbar(nsc_ps, ax=ax[1], orientation="horizontal", aspect=40, shrink=0.7)
-cbar.set_ticks(np.linspace(0, 3, 4));
+cbar.set_ticks(np.linspace(-7, -1, 7));
 cbar.set_label("Normalized Power", fontsize=14);
 
-plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Appendix02.png", dpi=300);
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/Appendix02.png", dpi=300);
 plt.show();
 # %%

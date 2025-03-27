@@ -35,10 +35,10 @@ with nc.Dataset(f"{path}NCRF/qv.nc", "r") as f:
     data["ncrf_qv"] = f.variables["qv"][:, :, lat_lim, :] * 1000.;
 
 # # Load Selected Events
-with open("/home/b11209013/Bachelor_Thesis/Major/CCKWs_Selection/CNTL_comp.pkl", "rb") as f:
+with open("/home/b11209013/Bachelor_Thesis/CCKWs_Selection/CNTL_comp.pkl", "rb") as f:
     cntl_comp = pkl.load(f);
 
-with open("/home/b11209013/Bachelor_Thesis/Major/CCKWs_Selection/NCRF_comp.pkl", "rb") as f:
+with open("/home/b11209013/Bachelor_Thesis/CCKWs_Selection/NCRF_comp.pkl", "rb") as f:
     ncrf_comp = pkl.load(f);
 
 sel_lon: dict[str, np.ndarray] = dict(
@@ -113,11 +113,11 @@ ax[1].set_xlim(0, 5)
 #ax[1].set_yscale("log")
 #ax[1].set_yticks(np.linspace(800, 1000, 11), np.linspace(800, 1000, 11, dtype=int))
 #ax[1].set_ylim(1000, 400)
-ax[1].set_xlabel(r"$\frac{\partial q_v}{\partial z}$ [g/kg]", fontsize=14)
+ax[1].set_xlabel(r"$\frac{\partial q_v}{\partial p} [\times 10^{4} g/kg/Pa]$", fontsize=14)
 #ax[1].set_ylabel(r"Level [hPa]", fontsize=14)
 ax[1].set_title("(b) Vertical Gradient of Moisture Profile of CNTL(b) and NCRF(r)", fontsize=14)
 ax[1].legend()
-#plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Appendix04.png", dpi=300)
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NCRF_moist.png", dpi=300)
 plt.show()
 
 
@@ -134,10 +134,11 @@ plt.bar(np.linspace(-2.5, 2.5, 6)[pos], diff[pos], color="red", width=0.2)
 plt.bar(np.linspace(-2.5, 2.5, 6)[neg], diff[neg], color="blue", width=0.2)
 plt.axhline(0, linestyle="--", color="black")
 plt.xlim(-3, 3)
-plt.ylim(-6e-7, 6e-7)
+plt.ylim(-8e-7, 8e-7)
 plt.xlabel("Lag days")
-plt.ylabel("Vertical Moisture Convergence")
-# plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Appendix05.png", dpi=300)
+plt.ylabel("Vertical Moisture Advection (K/day)")
+plt.title(r"Difference Vertical Moisture Advection (NCRF - CNTL) ($w^\prime \frac{\partial \overline{q_v}}{\partial p}$)")
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NCRF_vadv.png", dpi=300)
 plt.show()
 
 print((vert_int(daily_vconv["ncrf"]) - vert_int(daily_vconv["cntl"])).sum())

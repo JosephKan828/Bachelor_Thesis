@@ -35,20 +35,20 @@ with nc.Dataset(f"{path}NSC/qv.nc", "r") as f:
     data["nsc_qv"] = f.variables["qv"][:, :, lat_lim, :] * 1000.;
 
 # # Load Selected Events
-with open("/home/b11209013/Bachelor_Thesis/Major/CCKWs_Selection/CNTL_comp.pkl", "rb") as f:
+with open("/home/b11209013/Bachelor_Thesis/CCKWs_Selection/CNTL_comp.pkl", "rb") as f:
     cntl_comp = pkl.load(f);
 
-with open("/home/b11209013/Bachelor_Thesis/Major/CCKWs_Selection/NSC_comp.pkl", "rb") as f:
+with open("/home/b11209013/Bachelor_Thesis/CCKWs_Selection/NSC_comp.pkl", "rb") as f:
     nsc_comp = pkl.load(f);
 
 sel_lon: dict[str, np.ndarray] = dict(
     cntl=np.array(cntl_comp["sel_lon"]),
-    nsc =np.array(nsc_comp["sel_lon"]),
+    nsc=np.array(nsc_comp["sel_lon"]),
 );
 
 sel_time: dict[str, np.ndarray] = dict(
     cntl=np.array(cntl_comp["sel_time"]),
-    nsc =np.array(nsc_comp["sel_time"]),
+    nsc=np.array(nsc_comp["sel_time"]),
 );
 
 # %% Section 3
@@ -61,7 +61,7 @@ qv_mean = dict(
 
 w_rm_cli: dict[str, np.ndarray] = dict(
     cntl = (data["cntl_w"] - np.mean(data["cntl_w"], axis=(0, 2, 3), keepdims=True)).mean(axis=2),
-    nsc  = (data["nsc_w"]  - np.mean(data["nsc_w"], axis=(0, 2, 3), keepdims=True)).mean(axis=2),
+    nsc  = (data["nsc_w"]  - np.mean(data["nsc_w"] , axis=(0, 2, 3), keepdims=True)).mean(axis=2),
 );
 
 # # Select Events
@@ -79,12 +79,12 @@ data_sel: dict[str, np.ndarray] = dict(
 # compute vertical gradient in CCKWs
 qv_grad = dict(
     cntl = np.gradient(qv_mean["cntl"], dims["lev"]*100.),
-    nsc  = np.gradient(qv_mean["nsc"] , dims["lev"]*100.)
+    nsc  = np.gradient(qv_mean["nsc"], dims["lev"]*100.)
 )
 
 vertical_conv = dict(
     cntl = data_sel["cntl_w"]*qv_grad["cntl"][:, None],
-    nsc  = data_sel["nsc_w"]*qv_grad["nsc"][:, None]
+    nsc = data_sel["nsc_w"]*qv_grad["nsc"][:, None]
 ) 
 
 daily_vconv = dict(
@@ -93,16 +93,31 @@ daily_vconv = dict(
 )
 plt.rcParams["font.family"]="serif"
 
-plt.plot(qv_mean["cntl"], dims["lev"], color="blue", label="CNTL")
-plt.plot(qv_mean["nsc"], dims["lev"], color="red", label="NSC")
-plt.xlim(10, 17)
-plt.yscale("log")
-plt.yticks(np.linspace(800, 1000, 11), np.linspace(800, 1000, 11, dtype=int))
-plt.ylim(1000, 800)
-plt.xlabel(r"$q_v$ [g/kg]", fontsize=14)
-plt.ylabel(r"Level [hPa]", fontsize=14)
-plt.legend()
-plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Appendix04.png", dpi=300)
+fig, ax = plt.subplots(1, 2, figsize=(17, 6), sharey=True)
+
+ax[0].plot(qv_mean["cntl"], dims["lev"], color="blue", label="CNTL")
+ax[0].plot(qv_mean["nsc"] , dims["lev"], color="red", label="NCRF")
+ax[0].set_xlim(0, 17)
+ax[0].set_ylim(1000, 400)
+ax[0].set_yscale("log")
+ax[0].set_yticks(np.linspace(1000, 400, 7), np.linspace(1000, 400, 7, dtype=int))
+ax[0].set_xlabel(r"$q_v$ [g/kg]", fontsize=14)
+ax[0].set_ylabel(r"Level [hPa]", fontsize=14)
+ax[0].set_title("(a) Mean (x, y, t) Moisture Profile of CNTL(b) and NSC(r)", fontsize=14)
+ax[0].legend()
+
+ax[1].plot(qv_grad["cntl"]*1e4, dims["lev"], color="blue", label="CNTL")
+ax[1].plot(qv_grad["nsc"]*1e4, dims["lev"], color="red", label="NSC")
+ax[1].set_xlim(0, 6)
+#plt.xlim(10, 17)
+#ax[1].set_yscale("log")
+#ax[1].set_yticks(np.linspace(800, 1000, 11), np.linspace(800, 1000, 11, dtype=int))
+#ax[1].set_ylim(1000, 400)
+ax[1].set_xlabel(r"$\frac{\partial q_v}{\partial p} [\times 10^{4} g/kg/Pa]$", fontsize=14)
+#ax[1].set_ylabel(r"Level [hPa]", fontsize=14)
+ax[1].set_title("(b) Vertical Gradient of Moisture Profile of CNTL(b) and NSC(r)", fontsize=14)
+ax[1].legend()
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NSC_moist.png", dpi=300)
 plt.show()
 
 
@@ -119,10 +134,11 @@ plt.bar(np.linspace(-2.5, 2.5, 6)[pos], diff[pos], color="red", width=0.2)
 plt.bar(np.linspace(-2.5, 2.5, 6)[neg], diff[neg], color="blue", width=0.2)
 plt.axhline(0, linestyle="--", color="black")
 plt.xlim(-3, 3)
-plt.ylim(-6e-7, 6e-7)
+plt.ylim(-8e-7, 8e-7)
 plt.xlabel("Lag days")
-plt.ylabel("Vertical Moisture Convergence")
-plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Appendix05.png", dpi=300)
+plt.ylabel("Vertical Moisture Advection (K/day)")
+plt.title(r"Difference Vertical Moisture Advection (NSC - CNTL) ($w^\prime \frac{\partial \overline{q_v}}{\partial p}$)")
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NSC_vadv.png", dpi=300)
 plt.show()
 
 print((vert_int(daily_vconv["nsc"]) - vert_int(daily_vconv["cntl"])).sum())
