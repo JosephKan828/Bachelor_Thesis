@@ -43,7 +43,7 @@ def main():
     var_list, dims, data = load_data();
 
     # Load events
-    with open("/home/b11209013/Bachelor_Thesis/Major/CCKWs_Selection/CNTL_comp.pkl", "rb") as f:
+    with open("/home/b11209013/Bachelor_Thesis/CCKWs_Selection/CNTL_comp.pkl", "rb") as f:
         sel_kel = pkl.load(f);
 
     sel_lon : np.ndarray = np.array(sel_kel["sel_lon"]);
@@ -128,8 +128,8 @@ def main():
     # Set global font settings
     plt.rcParams["font.family"] = "serif"
     plt.rcParams["mathtext.fontset"] = "cm"
-    plt.rcParams["xtick.labelsize"] = 12
-    plt.rcParams["ytick.labelsize"] = 12
+    plt.rcParams["xtick.labelsize"] = 14
+    plt.rcParams["ytick.labelsize"] = 14
 
     # Create figure and GridSpec layout with increased hspace
     fig = plt.figure(figsize=(16, 15))
@@ -150,14 +150,14 @@ def main():
     ax0.set_xlim(3, -3)
     ax0.set_ylim(1000, 100)
 
-    ax0.set_title("(a) CNTL LW Heating (Shading) & Temperature (Contour) & EAPE growth rate (Bar)", loc="left", fontsize=16)
+    ax0.set_title("(a) CNTL LW Heating (Shading) & Temperature (Contour) & EAPE growth rate (Bar)", loc="left", fontsize=20)
 
     # Add colorbar for ax0
     cax0 = inset_axes(ax0, width="1.5%", height="80%", loc="center right",
                     bbox_to_anchor=(0.04, 0, 1, 1),
                     bbox_transform=ax0.transAxes, borderpad=0)
     fig.colorbar(lw_cf, cax=cax0)
-    plt.clabel(t_cf, fmt="%1.2f", inline=True, fontsize=10)
+    plt.clabel(t_cf, fmt="%1.2f", inline=True, fontsize=12)
 
     # Lower panel (LW bar plot)
     ax1 = fig.add_subplot(gs[1], sharex=ax0)
@@ -190,14 +190,14 @@ def main():
     ax2.set_yticks(np.linspace(100, 1000, 10), np.linspace(100, 1000, 10, dtype=int))
 
     ax2.set_ylim(1000, 100)
-    ax2.set_title("(b) CNTL SW Heating (Shading) & Temperature (Contour) & EAPE growth rate (Bar)", loc="left", fontsize=16)
+    ax2.set_title("(b) CNTL SW Heating (Shading) & Temperature (Contour) & EAPE growth rate (Bar)", loc="left", fontsize=20)
 
     # Add colorbar for ax2
     cax2 = inset_axes(ax2, width="1.5%", height="80%", loc="center right",
                     bbox_to_anchor=(0.04, 0, 1, 1),
                     bbox_transform=ax2.transAxes, borderpad=0)
     fig.colorbar(sw_cf, cax=cax2)
-    plt.clabel(t_cf, fmt="%1.2f", inline=True, fontsize=10)
+    plt.clabel(t_cf, fmt="%1.2f", inline=True, fontsize=12)
 
     # Move ax2 downward (adjusting GridSpec hspace)
     pos2 = ax2.get_position()
@@ -219,7 +219,7 @@ def main():
     pos2 = ax2.get_position()
     pos3 = ax3.get_position()
     ax3.set_position([pos3.x0, pos3.y0+0.01, pos2.width, pos3.height])
-    plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Figure02.png", dpi=300);
+    plt.savefig("/home/b11209013/Bachelor_Thesis/Major/Figure/Figure02.png", dpi=600);
     plt.show()
 
 if __name__ == "__main__":
