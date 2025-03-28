@@ -95,10 +95,10 @@ data_sel: dict[str, np.ndarray] = dict(
 # Plot
 plt.rcParams["font.family"] = "serif";
 plt.rcParams["mathtext.fontset"] = "cm";
-plt.rcParams["xtick.labelsize"] = 12;
-plt.rcParams["ytick.labelsize"] = 12;
+plt.rcParams["xtick.labelsize"] = 16;
+plt.rcParams["ytick.labelsize"] = 16;
 
-fig, ax = plt.subplots(2, figsize=(16, 12), sharex=True);
+fig, ax = plt.subplots(2, figsize=(19, 20), sharex=True);
 
 lw_diff = ax[0].pcolormesh(
     np.linspace(-3, 2.75, 24), dims["lev"],
@@ -109,20 +109,22 @@ lw_diff = ax[0].pcolormesh(
 t_c = ax[0].contour(
     np.linspace(-3, 2.75, 24), dims["lev"],
     data_sel["t"],
-    colors="k", norm=TwoSlopeNorm(vcenter=0)
+    colors="k", norm=TwoSlopeNorm(vcenter=0),
+    linewidths=2,
 );
 plt.subplots_adjust(left=0.1, bottom=0.1, right=1.03, top=0.92);
 ax[0].set_yscale("log");
-ax[0].set_xticks(np.linspace(-3, 3, 7), np.linspace(-3, 3, 7, dtype=int), fontsize=12);
-ax[0].set_yticks(np.linspace(100, 1000, 10), np.linspace(100, 1000, 10, dtype=int), fontsize=12);
-ax[0].text(3.5, 350, "Level [hPa]", va="center", ha="center", rotation=90, fontsize=14);
-ax[0].text(-4, 350, "LW Heating Difference [K/day]", va="center", ha="center", rotation=90, fontsize=14);
-ax[0].text(3, 95, "(a)\nShading: LW heating Difference (CNTL - NCRF)\nContour: CNTL Temperature [K]", va="bottom", ha="left", fontsize=14);
+ax[0].set_xticks(np.linspace(-3, 3, 7), np.linspace(-3, 3, 7, dtype=int), fontsize=20);
+ax[0].set_yticks(np.linspace(100, 1000, 10), np.linspace(100, 1000, 10, dtype=int), fontsize=20);
+ax[0].text(3.5, 350, "Level [hPa]", va="center", ha="center", rotation=90, fontsize=24);
+ax[0].text(-4, 350, "LW Heating Difference [K/day]", va="center", ha="center", rotation=90, fontsize=20);
+ax[0].text(3, 95, "(a)\nShading: LW heating Difference (CNTL - NCRF)\nContour: CNTL Temperature [K]", va="bottom", ha="left", fontsize=20);
 ax[0].set_xlim(3, -3);
 ax[0].set_ylim(1000, 100);
-plt.clabel(t_c, fmt="%1.2f", inline=True, fontsize=10);
-
+plt.clabel(t_c, fmt="%1.2f", inline=True, fontsize=14);
 plt.colorbar(lw_diff);
+lw_diff.figure.axes[1].tick_params(axis="y", labelsize=14)
+
 
 qv_diff = ax[1].pcolormesh(
     np.linspace(-3, 2.75, 24), dims["lev"],
@@ -134,18 +136,20 @@ qv_c = ax[1].contour(
     np.linspace(-3, 2.75, 24), dims["lev"],
     data_sel["cntl_qv"],
     colors="k",
+    linewidths=2,
 );
 ax[1].set_yscale("log");
-ax[1].set_xticks(np.linspace(-3, 3, 7), np.linspace(-3, 3, 7, dtype=int), fontsize=12);
-ax[1].set_yticks(np.linspace(100, 1000, 10), np.linspace(100, 1000, 10, dtype=int), fontsize=12);
-ax[1].text(3.4, 350, "Level [hPa]", va="center", ha="center", rotation=90, fontsize=14);
-ax[1].text(-4, 350, r"$q_v$ Difference [g/kg]", va="center", ha="center", rotation=90, fontsize=14);
-ax[1].text(3, 95, "(b)\n"+r"Shading: $q_v$"+"Difference (CNTL - NCRF)\n"+r"Contour: CNTL $q_v$ [g/kg]", va="bottom", ha="left", fontsize=14);
+ax[1].set_xticks(np.linspace(-3, 3, 7), np.linspace(-3, 3, 7, dtype=int), fontsize=20);
+ax[1].set_yticks(np.linspace(100, 1000, 10), np.linspace(100, 1000, 10, dtype=int), fontsize=20);
+ax[1].text(3.5, 350, "Level [hPa]", va="center", ha="center", rotation=90, fontsize=24);
+ax[1].text(-4, 350, r"$q_v$ Difference [g/kg]", va="center", ha="center", rotation=90, fontsize=20);
+ax[1].text(3, 95, "(b)\n"+r"Shading: $q_v$"+"Difference (CNTL - NCRF)\n"+r"Contour: CNTL $q_v$ [g/kg]", va="bottom", ha="left", fontsize=20);
 
 ax[1].set_xlim(3, -3);
 ax[1].set_ylim(1000, 100);
-plt.clabel(qv_c, fmt="%1.2f", inline=True, fontsize=10);
+plt.clabel(qv_c, fmt="%1.2f", inline=True, fontsize=14);
 plt.colorbar(qv_diff);
+qv_diff.figure.axes[1].tick_params(axis="y", labelsize=14)
 
-plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NCRF_LW_qv_diff.png", dpi=300);
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NCRF_LW_qv_diff.png", dpi=600);
 plt.show();

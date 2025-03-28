@@ -93,31 +93,39 @@ daily_vconv = dict(
 )
 plt.rcParams["font.family"]="serif"
 
-fig, ax = plt.subplots(1, 2, figsize=(17, 6), sharey=True)
+
+xticks_1 = np.linspace(0, 17, 9, dtype=int);
+xticks_2 = np.linspace(0,  5, 6, dtype=int);
+yticks   = np.linspace(1000, 400, 7, dtype=int);
+
+fig, ax = plt.subplots(1, 2, figsize=(19, 10), sharey=True)
 
 ax[0].plot(qv_mean["cntl"], dims["lev"], color="blue", label="CNTL")
 ax[0].plot(qv_mean["ncrf"], dims["lev"], color="red", label="NCRF")
+ax[0].set_yscale("log")
+ax[0].set_xticks(xticks_1);
+ax[0].set_yticks(yticks);
+
+ax[0].set_xticklabels([f"{tick}" for tick in xticks_1], fontsize=16)
+ax[0].set_yticklabels([f"{tick}" for tick in yticks], fontsize=16)
+
 ax[0].set_xlim(0, 17)
 ax[0].set_ylim(1000, 400)
-ax[0].set_yscale("log")
-ax[0].set_yticks(np.linspace(1000, 400, 7), np.linspace(1000, 400, 7, dtype=int))
-ax[0].set_xlabel(r"$q_v$ [g/kg]", fontsize=14)
-ax[0].set_ylabel(r"Level [hPa]", fontsize=14)
-ax[0].set_title("(a) Mean (x, y, t) Moisture Profile of CNTL(b) and NCRF(r)", fontsize=14)
-ax[0].legend()
+ax[0].set_xlabel(r"$q_v$ [g/kg]", fontsize=18)
+ax[0].set_ylabel(r"Level [hPa]", fontsize=18)
+ax[0].set_title("(a) Mean Moisture Profile of CNTL(b) and NCRF(r)", fontsize=18)
+ax[0].legend(fontsize=18)
 
 ax[1].plot(qv_grad["cntl"]*1e4, dims["lev"], color="blue", label="CNTL")
 ax[1].plot(qv_grad["ncrf"]*1e4, dims["lev"], color="red", label="NCRF")
+
+ax[1].set_xticks(xticks_2);
+ax[1].set_xticklabels([f"{tick}" for tick in xticks_2], fontsize=16)
 ax[1].set_xlim(0, 5)
-#plt.xlim(10, 17)
-#ax[1].set_yscale("log")
-#ax[1].set_yticks(np.linspace(800, 1000, 11), np.linspace(800, 1000, 11, dtype=int))
-#ax[1].set_ylim(1000, 400)
-ax[1].set_xlabel(r"$\frac{\partial q_v}{\partial p} [\times 10^{4} g/kg/Pa]$", fontsize=14)
-#ax[1].set_ylabel(r"Level [hPa]", fontsize=14)
-ax[1].set_title("(b) Vertical Gradient of Moisture Profile of CNTL(b) and NCRF(r)", fontsize=14)
-ax[1].legend()
-plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NCRF_moist.png", dpi=300)
+ax[1].set_xlabel(r"$\frac{\partial q_v}{\partial p} [\times 10^{4} g/kg/Pa]$", fontsize=18)
+ax[1].set_title("(b) Vertical Gradient of Moisture Profile of CNTL(b) and NCRF(r)", fontsize=18)
+ax[1].legend(fontsize=18)
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NCRF_moist.png", dpi=600)
 plt.show()
 
 
@@ -130,15 +138,22 @@ diff = vert_int(daily_vconv["ncrf"]) - vert_int(daily_vconv["cntl"])
 pos = np.where(diff >= 0)
 neg = np.where(diff <0)
 
+plt.figure(figsize=(12, 8))
+
+xtick = np.linspace(-3, 3, 7, dtype=int);
+ytick = np.linspace(-8e-7, 8e-7, 9);
+
 plt.bar(np.linspace(-2.5, 2.5, 6)[pos], diff[pos], color="red", width=0.2)
 plt.bar(np.linspace(-2.5, 2.5, 6)[neg], diff[neg], color="blue", width=0.2)
 plt.axhline(0, linestyle="--", color="black")
+plt.xticks(xtick, fontsize=16);
+plt.yticks(ytick, fontsize=16);
 plt.xlim(-3, 3)
 plt.ylim(-8e-7, 8e-7)
-plt.xlabel("Lag days")
-plt.ylabel("Vertical Moisture Advection (K/day)")
-plt.title(r"Difference Vertical Moisture Advection (NCRF - CNTL) ($w^\prime \frac{\partial \overline{q_v}}{\partial p}$)")
-plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NCRF_vadv.png", dpi=300)
+plt.xlabel("Lag days", fontsize=18)
+plt.ylabel("Vertical Moisture Advection (K/day)", fontsize=18)
+plt.title(r"Difference Vertical Moisture Advection (NCRF - CNTL) ($w^\prime \frac{\partial \overline{q_v}}{\partial p}$)", fontsize=18)
+plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/NCRF_vadv.png", dpi=600)
 plt.show()
 
 print((vert_int(daily_vconv["ncrf"]) - vert_int(daily_vconv["cntl"])).sum())

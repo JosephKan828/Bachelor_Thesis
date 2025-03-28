@@ -64,7 +64,7 @@ for var in data_rm_cli.keys():
 plt.rcParams["font.family"] = "serif";
 plt.rcParams["mathtext.fontset"] = "cm";
 
-plt.figure(figsize=(16, 7));
+plt.figure(figsize=(19, 10));
 q1_cf = plt.pcolormesh(
     np.linspace(-3, 2.75, 24), dims["lev"],
     data_sel["q1"],
@@ -74,27 +74,30 @@ t_cf = plt.contour(
     np.linspace(-3, 2.75, 24), dims["lev"],
     data_sel["t"],
     colors="k", levels=np.arange(-2.5, 2.6, 0.5),
+    linewidths=2
 );
 qv_cf = plt.contour(
     np.linspace(-3, 2.75, 24), dims["lev"],
     data_sel["qv"],
-    colors="g", levels=np.arange(-0.8, 0.86, 0.25)
+    colors="g", levels=np.arange(-0.8, 0.86, 0.25),
+    linewidths=2
 );
 plt.subplots_adjust(left=0.1, bottom=0.15, right=1.03, top=0.9);
 plt.yscale("log");
-plt.xticks(np.linspace(-3, 3, 7), np.linspace(-3, 3, 7, dtype=int), fontsize=12);
-plt.yticks(np.linspace(100, 1000, 10), np.linspace(100, 1000, 10, dtype=int), fontsize=12);
-plt.text(3.5, 350, "Level [hPa]", va="center", ha="center", rotation=90, fontsize=14);
-plt.text(-3.8, 350, r"$Q_1$ [K/day]", va="center", ha="center", rotation=90, fontsize=14);
-plt.text(1.5, 1300, "Day After", va="center", ha="center", fontsize=14);
-plt.text(-1.5, 1300, "Day Before", va="center", ha="center", fontsize=14);
-plt.text(3, 95, r"Shading: $Q_1$ [K/day]"+"\nContour: Temperature [K]; $q_v$ [g/kg]", va="bottom", ha="left", fontsize=14);
+plt.xticks(np.linspace(-3, 3, 7), np.linspace(-3, 3, 7, dtype=int), fontsize=16);
+plt.yticks(np.linspace(100, 1000, 10), np.linspace(100, 1000, 10, dtype=int), fontsize=16);
+plt.text(3.5, 350, "Level [hPa]", va="center", ha="center", rotation=90, fontsize=20);
+plt.text(-3.8, 350, r"$Q_1$ [K/day]", va="center", ha="center", rotation=90, fontsize=20);
+plt.text(1.5, 1300, "Day After", va="center", ha="center", fontsize=20);
+plt.text(-1.5, 1300, "Day Before", va="center", ha="center", fontsize=20);
+plt.text(3, 95, r"Shading: $Q_1$ [K/day]"+"\nContour: Temperature [K]; $q_v$ [g/kg]", va="bottom", ha="left", fontsize=20);
 plt.xlim(-3, 3);
 plt.ylim(100, 1000);
 plt.gca().invert_xaxis();
 plt.gca().invert_yaxis();
-plt.colorbar(q1_cf);
-plt.clabel(t_cf, fmt="%1.2f", inline=True, fontsize=10);
-plt.clabel(qv_cf, fmt="%1.2f", inline=True, fontsize=10);
+cb = plt.colorbar(q1_cf);
+plt.clabel(t_cf, fmt="%1.2f", inline=True, fontsize=14);
+plt.clabel(qv_cf, fmt="%1.2f", inline=True, fontsize=14);
+q1_cf.figure.axes[1].tick_params(axis="y", labelsize=16)
 plt.savefig("/home/b11209013/Bachelor_Thesis/Figure/CCKW_q1_cli.png", dpi=500);
 plt.show();
